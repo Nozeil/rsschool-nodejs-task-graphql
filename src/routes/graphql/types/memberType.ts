@@ -1,11 +1,11 @@
 import { GraphQLObjectType, GraphQLFloat, GraphQLInt } from "graphql";
-import { memberTypeId } from "./memberTypeId.js";
+import { MemberTypeIdGQLEnumType } from "./memberTypeId.js";
 
 export const memberType = new GraphQLObjectType({
   name: 'memberType',
   fields: () => ({
     id: {
-      type: memberTypeId,
+      type: MemberTypeIdGQLEnumType,
     },
     discount: {
       type: GraphQLFloat,

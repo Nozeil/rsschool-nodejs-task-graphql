@@ -1,6 +1,6 @@
 import { GraphQLObjectType, GraphQLFloat, GraphQLBoolean } from 'graphql';
 import { UUIDType } from './uuid.js';
-import { memberTypeId } from './memberTypeId.js';
+import { MemberTypeIdGQLEnumType } from './memberTypeId.js';
 
 export const profile = new GraphQLObjectType({
   name: 'profile',
@@ -18,7 +18,7 @@ export const profile = new GraphQLObjectType({
       type: UUIDType,
     },
     memberTypeId: {
-      type: memberTypeId,
+      type: MemberTypeIdGQLEnumType,
     },
   }),
 });

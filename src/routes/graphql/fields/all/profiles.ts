@@ -1,6 +1,6 @@
-import { FastifyInstance } from "fastify";
-import { GraphQLList } from "graphql";
-import { profile } from "../types/profile.js";
+import { FastifyInstance } from 'fastify';
+import { GraphQLList } from 'graphql';
+import { profile } from '../../types/profile.js';
 
 const profiles = {
   type: new GraphQLList(profile),
@@ -8,6 +8,6 @@ const profiles = {
     const result = context.prisma.profile.findMany();
     return result;
   },
-}
+};
 
 export default profiles;

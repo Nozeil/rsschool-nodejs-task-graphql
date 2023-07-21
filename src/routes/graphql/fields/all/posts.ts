@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { GraphQLList } from 'graphql';
-import { post } from '../types/posts.js';
+import { post } from '../../types/post.js';
 
 const posts = {
   type: new GraphQLList(post),

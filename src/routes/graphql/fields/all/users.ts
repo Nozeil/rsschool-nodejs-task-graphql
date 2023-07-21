@@ -1,6 +1,6 @@
-import { FastifyInstance } from "fastify";
-import { GraphQLList } from "graphql";
-import { user } from "../types/users.js";
+import { FastifyInstance } from 'fastify';
+import { GraphQLList } from 'graphql';
+import { user } from '../../types/user.js';
 
 export const users = {
   type: new GraphQLList(user),
@@ -8,6 +8,6 @@ export const users = {
     const result = context.prisma.user.findMany();
     return result;
   },
-}
+};
 
 export default users;
