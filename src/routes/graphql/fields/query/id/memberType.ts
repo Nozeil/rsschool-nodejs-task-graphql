@@ -1,8 +1,8 @@
 import { FastifyInstance } from 'fastify';
 import { GraphQLNonNull } from 'graphql';
-import { MemberTypeId } from '../../../member-types/schemas.js';
-import { MemberTypeIdGQLEnumType } from '../../types/memberTypeId.js';
-import { memberType } from '../../types/memberType.js';
+import { MemberTypeId } from '../../../../member-types/schemas.js';
+import { MemberTypeIdGQLEnumType } from '../../../types/memberTypeId.js';
+import { memberType } from '../../../types/memberType.js';
 
 const memberTypeId = {
   type: memberType,

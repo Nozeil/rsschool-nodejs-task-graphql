@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { GraphQLList } from 'graphql';
-import { memberType } from '../../types/memberType.js';
+import { memberType } from '../../../types/memberType.js';
 
 const memberTypes = {
   type: new GraphQLList(memberType),

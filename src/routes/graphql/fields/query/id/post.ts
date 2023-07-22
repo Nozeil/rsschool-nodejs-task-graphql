@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { GraphQLNonNull } from 'graphql';
-import { post } from '../../types/post.js';
-import { UUIDType } from '../../types/uuid.js';
+import { post } from '../../../types/post.js';
+import { UUIDType } from '../../../types/uuid.js';
 
 const postById = {
   type: post,

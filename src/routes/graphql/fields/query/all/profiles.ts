@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { GraphQLList } from 'graphql';
-import { profile } from '../../types/profile.js';
+import { profile } from '../../../types/profile.js';
 
 const profiles = {
   type: new GraphQLList(profile),

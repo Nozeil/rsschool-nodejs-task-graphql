@@ -5,12 +5,15 @@ import { profile } from './profile.js';
 import { FastifyInstance } from 'fastify';
 
 type Source = {
-  id: string,
-  name: string,
-  balance: number
-}
+  id: string;
+  name: string;
+  balance: number;
+};
 
-export const user = new GraphQLObjectType<Source, FastifyInstance>({
+export const user: GraphQLObjectType<Source, FastifyInstance> = new GraphQLObjectType<
+  Source,
+  FastifyInstance
+>({
   name: 'user',
   fields: () => ({
     id: {
