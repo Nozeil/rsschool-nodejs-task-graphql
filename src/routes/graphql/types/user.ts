@@ -2,7 +2,7 @@ import { GraphQLObjectType, GraphQLString, GraphQLFloat, GraphQLList } from 'gra
 import { UUIDType } from './uuid.js';
 import { post } from './post.js';
 import { profile } from './profile.js';
-import { FastifyInstance } from 'fastify';
+import { ContextValue } from '../types.js';
 
 type Source = {
   id: string;
@@ -10,9 +10,9 @@ type Source = {
   balance: number;
 };
 
-export const user: GraphQLObjectType<Source, FastifyInstance> = new GraphQLObjectType<
+export const user: GraphQLObjectType<Source, ContextValue> = new GraphQLObjectType<
   Source,
-  FastifyInstance
+  ContextValue
 >({
   name: 'user',
   fields: () => ({
@@ -31,7 +31,8 @@ export const user: GraphQLObjectType<Source, FastifyInstance> = new GraphQLObjec
     profile: {
       type: profile,
       resolve(source, _args, context) {
-        const result = context.prisma.profile.findUnique({
+        const { fastify } = context;
+        const result = fastify.prisma.profile.findUnique({
           where: {
             userId: source.id,
           },
@@ -43,7 +44,8 @@ export const user: GraphQLObjectType<Source, FastifyInstance> = new GraphQLObjec
     posts: {
       type: new GraphQLList(post),
       resolve(source, _args, context) {
-        const result = context.prisma.post.findMany({
+        const { fastify } = context;
+        const result = fastify.prisma.post.findMany({
           where: {
             authorId: source.id,
           },
@@ -55,7 +57,8 @@ export const user: GraphQLObjectType<Source, FastifyInstance> = new GraphQLObjec
     userSubscribedTo: {
       type: new GraphQLList(user),
       resolve(source, _args, context) {
-        const result = context.prisma.user.findMany({
+        const { fastify } = context;
+        const result = fastify.prisma.user.findMany({
           where: {
             subscribedToUser: {
               some: {
@@ -71,7 +74,8 @@ export const user: GraphQLObjectType<Source, FastifyInstance> = new GraphQLObjec
     subscribedToUser: {
       type: new GraphQLList(user),
       resolve(source, _args, context) {
-        const result = context.prisma.user.findMany({
+        const { fastify } = context;
+        const result = fastify.prisma.user.findMany({
           where: {
             userSubscribedTo: {
               some: {

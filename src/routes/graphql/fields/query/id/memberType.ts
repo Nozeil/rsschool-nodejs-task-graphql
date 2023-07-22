@@ -1,8 +1,8 @@
-import { FastifyInstance } from 'fastify';
 import { GraphQLNonNull } from 'graphql';
 import { MemberTypeId } from '../../../../member-types/schemas.js';
 import { MemberTypeIdGQLEnumType } from '../../../types/memberTypeId.js';
 import { memberType } from '../../../types/memberType.js';
+import { ContextValue } from '../../../types.js';
 
 const memberTypeId = {
   type: memberType,
@@ -11,8 +11,9 @@ const memberTypeId = {
       type: new GraphQLNonNull(MemberTypeIdGQLEnumType),
     },
   },
-  resolve(_source, args: { id: MemberTypeId }, context: FastifyInstance) {
-    const result = context.prisma.memberType.findUnique({
+  resolve(_source, args: { id: MemberTypeId }, context: ContextValue) {
+    const { fastify } = context;
+    const result = fastify.prisma.memberType.findUnique({
       where: {
         id: args.id,
       },

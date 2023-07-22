@@ -1,7 +1,7 @@
-import { FastifyInstance } from 'fastify';
 import { GraphQLInputObjectType } from 'graphql';
 import { post } from '../../../types/post.js';
 import { postDto } from '../dto/post.js';
+import { ContextValue } from '../../../types.js';
 
 export const createPost = {
   type: post,
@@ -9,16 +9,17 @@ export const createPost = {
     dto: {
       type: new GraphQLInputObjectType({
         name: 'CreatePostInput',
-        fields: postDto
+        fields: postDto,
       }),
     },
   },
   resolve(
     _source,
     args: { dto: { title: string; content: string; authorId: string } },
-    context: FastifyInstance,
+    context: ContextValue,
   ) {
-    const result = context.prisma.post.create({
+    const { fastify } = context;
+    const result = fastify.prisma.post.create({
       data: args.dto,
     });
     return result;

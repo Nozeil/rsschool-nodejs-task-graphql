@@ -2,8 +2,8 @@ import { GraphQLObjectType, GraphQLFloat, GraphQLBoolean } from 'graphql';
 import { UUIDType } from './uuid.js';
 import { MemberTypeIdGQLEnumType } from './memberTypeId.js';
 import { memberType } from './memberType.js';
-import { FastifyInstance } from 'fastify';
 import { MemberTypeId } from '../../member-types/schemas.js';
+import { ContextValue } from '../types.js';
 
 type Source = {
   id: string;
@@ -13,7 +13,7 @@ type Source = {
   memberTypeId: MemberTypeId;
 }
 
-export const profile = new GraphQLObjectType<Source, FastifyInstance>({
+export const profile = new GraphQLObjectType<Source, ContextValue>({
   name: 'profile',
   fields: () => ({
     id: {
@@ -34,7 +34,8 @@ export const profile = new GraphQLObjectType<Source, FastifyInstance>({
     memberType: {
       type: memberType,
       resolve(source, _args, context) {
-        const result = context.prisma.memberType.findUnique({
+        const { fastify } = context;
+        const result = fastify.prisma.memberType.findUnique({
           where: {
             id: source.memberTypeId,
           },

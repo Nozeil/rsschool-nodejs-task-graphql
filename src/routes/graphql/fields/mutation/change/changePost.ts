@@ -1,8 +1,8 @@
-import { FastifyInstance } from 'fastify';
 import { GraphQLInputObjectType, GraphQLNonNull } from 'graphql';
 import { post } from '../../../types/post.js';
 import { UUIDType } from '../../../types/uuid.js';
 import { PostDtoArgs, postDto } from '../dto/post.js';
+import { ContextValue } from '../../../types.js';
 
 export const changePost = {
   type: post,
@@ -15,12 +15,9 @@ export const changePost = {
       }),
     },
   },
-  resolve(
-    _source,
-    args: { id: string; dto: PostDtoArgs },
-    context: FastifyInstance,
-  ) {
-    const result = context.prisma.post.update({
+  resolve(_source, args: { id: string; dto: PostDtoArgs }, context: ContextValue) {
+    const { fastify } = context;
+    const result = fastify.prisma.post.update({
       where: { id: args.id },
       data: args.dto,
     });

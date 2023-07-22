@@ -1,7 +1,7 @@
-import { FastifyInstance } from 'fastify';
 import { GraphQLNonNull } from 'graphql';
 import { post } from '../../../types/post.js';
 import { UUIDType } from '../../../types/uuid.js';
+import { ContextValue } from '../../../types.js';
 
 const postById = {
   type: post,
@@ -10,8 +10,9 @@ const postById = {
       type: new GraphQLNonNull(UUIDType),
     },
   },
-  resolve(_source, args: { id: string }, context: FastifyInstance) {
-    const result = context.prisma.post.findUnique({
+  resolve(_source, args: { id: string }, context: ContextValue) {
+    const { fastify } = context;
+    const result = fastify.prisma.post.findUnique({
       where: {
         id: args.id,
       },

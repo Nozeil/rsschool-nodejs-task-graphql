@@ -1,8 +1,8 @@
-import { FastifyInstance } from 'fastify';
 import { GraphQLInputObjectType } from 'graphql';
 import { profile } from '../../../types/profile.js';
 import { ProfileDtoArgs, profileDto } from '../dto/profile.js';
 import { UUIDType } from '../../../types/uuid.js';
+import { ContextValue } from '../../../types.js';
 
 export const createProfile = {
   type: profile,
@@ -24,9 +24,10 @@ export const createProfile = {
     args: {
       dto: ProfileDtoArgs;
     },
-    context: FastifyInstance,
+    context: ContextValue,
   ) {
-    const result = context.prisma.profile.create({
+    const { fastify } = context;
+    const result = fastify.prisma.profile.create({
       data: args.dto,
     });
     return result;

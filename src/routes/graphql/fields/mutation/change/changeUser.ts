@@ -1,8 +1,8 @@
-import { FastifyInstance } from 'fastify';
 import { GraphQLInputObjectType, GraphQLNonNull } from 'graphql';
 import { UUIDType } from '../../../types/uuid.js';
 import { user } from '../../../types/user.js';
 import { UserDtoArgs, userDto } from '../dto/user.js';
+import { ContextValue } from '../../../types.js';
 
 export const changeUser = {
   type: user,
@@ -15,12 +15,9 @@ export const changeUser = {
       }),
     },
   },
-  resolve(
-    _source,
-    args: { id: string; dto: UserDtoArgs },
-    context: FastifyInstance,
-  ) {
-    const result = context.prisma.user.update({
+  resolve(_source, args: { id: string; dto: UserDtoArgs }, context: ContextValue) {
+    const { fastify } = context;
+    const result = fastify.prisma.user.update({
       where: { id: args.id },
       data: args.dto,
     });
