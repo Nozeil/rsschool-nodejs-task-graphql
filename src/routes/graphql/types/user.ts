@@ -4,12 +4,22 @@ import { post } from './post.js';
 import { profile } from './profile.js';
 import { ContextValue } from '../types.js';
 import DataLoader from 'dataloader';
+import { USERS_DL_KEY, USERS_DL_PRIME_KEY } from '../constants.js';
 
 type Source = {
   id: string;
   name: string;
   balance: number;
 };
+
+type Sub = { authorId: string; subscriberId: string }
+
+interface SourceWithSubs extends Source {
+  subscribedToUser: Sub[];
+  userSubscribedTo: Sub[];
+}
+
+type Users = SourceWithSubs[];
 
 export const user: GraphQLObjectType<Source, ContextValue> = new GraphQLObjectType<
   Source,
@@ -85,7 +95,7 @@ export const user: GraphQLObjectType<Source, ContextValue> = new GraphQLObjectTy
 
     userSubscribedTo: {
       type: new GraphQLList(user),
-      resolve(source, _args, context, info) {
+      async resolve(source, _args, context, info) {
         const { fastify, dataLoaders } = context;
 
         if (info.variableValues.userId) {
@@ -101,35 +111,17 @@ export const user: GraphQLObjectType<Source, ContextValue> = new GraphQLObjectTy
           return result;
         }
 
-        let dl = dataLoaders.get(info.fieldNodes);
+        const usersDl = dataLoaders.get(USERS_DL_KEY);
+        const users = (await usersDl?.load(USERS_DL_PRIME_KEY)) as Users;
+        const userFromDl = users.find(user => user.id === source.id);
 
-        if (!dl) {
-          dl = new DataLoader(async (ids: readonly string[]) => {
-            const users = await fastify.prisma.user.findMany({
-              where: {
-                subscribedToUser: {
-                  some: {
-                    subscriberId: { in: [...ids] },
-                  },
-                },
-              },
-            });
-            const sortedUsersInIdsOrder = ids.map((id) =>
-              users.find((user) => user.id === id),
-            );
-            return sortedUsersInIdsOrder;
-          });
-
-          dataLoaders.set(info.fieldNodes, dl);
-        }
-
-        return dl.loadMany([source.id]);
+        return userFromDl?.userSubscribedTo ?? null;
       },
     },
 
     subscribedToUser: {
       type: new GraphQLList(user),
-      resolve(source, _args, context, info) {
+      async resolve(source, _args, context, info) {
         const { fastify, dataLoaders } = context;
 
         if (info.variableValues.userId) {
@@ -144,29 +136,11 @@ export const user: GraphQLObjectType<Source, ContextValue> = new GraphQLObjectTy
           });
           return result;
         }
-        let dl = dataLoaders.get(info.fieldNodes);
+        const usersDl = dataLoaders.get(USERS_DL_KEY);
+        const users = (await usersDl?.load(USERS_DL_PRIME_KEY)) as Users;
+        const userFromDl = users.find(user => user.id === source.id);
 
-        if (!dl) {
-          dl = new DataLoader(async (ids: readonly string[]) => {
-            const users = await fastify.prisma.user.findMany({
-              where: {
-                userSubscribedTo: {
-                  some: {
-                    authorId: { in: [...ids] },
-                  },
-                },
-              },
-            });
-            const sortedUsersInIdsOrder = ids.map((id) =>
-              users.find((user) => user.id === id),
-            );
-            return sortedUsersInIdsOrder;
-          });
-
-          dataLoaders.set(info.fieldNodes, dl);
-        }
-
-        return dl.loadMany([source.id]);
+        return userFromDl?.subscribedToUser ?? null;
       },
     },
   }),
